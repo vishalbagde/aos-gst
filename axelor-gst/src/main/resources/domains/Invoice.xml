@@ -3,11 +3,12 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://axelor.com/xml/ns/domain-models http://axelor.com/xml/ns/domain-models/domain-models_5.2.xsd">
 
-	<module name="base" package="com.axelor.apps.base.db" />
+	<module name="account" package="com.axelor.apps.account.db" />
 
-	<entity name="Product" lang="java">
-		<string name="hsbn" title="HSBN NO" />
-		<decimal name="gstRate" title="GST RATE"></decimal>
+	<entity sequential="true" name="Invoice" lang="java">
+		<decimal name="netIgst" title="Net IGST" />
+		<decimal name="netCgst" title="Net CGST" />
+		<decimal name="netSgst" title="Net SGST" />
 	</entity>
 
-</domain-models>	
+</domain-models>

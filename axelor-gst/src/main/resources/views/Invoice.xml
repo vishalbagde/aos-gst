@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<object-views xmlns="http://axelor.com/xml/ns/object-views"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://axelor.com/xml/ns/object-views http://axelor.com/xml/ns/object-views/object-views_5.2.xsd">
+
+	<form name="invoice-form" id="gst-invoice-form" title="Invoice"
+		model="com.axelor.apps.account.db.Invoice" extension="true">
+
+		<extend target="//panel-tabs[@name='mainPanelTab']">
+			<insert position="after">
+				<panel name="netGstTotalPanel" title="Gst Details" itemSpan="4">
+					<field name="netCgst" title="CGST" readonly="true"/>
+					<field name="netSgst" title="SGST" readonly="true"/>
+					<field name="netIgst" title="IGST" readonly="true"/>
+				</panel>
+			</insert>
+		</extend>
+	</form>
+
+</object-views>
