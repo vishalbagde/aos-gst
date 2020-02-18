@@ -3,7 +3,6 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://axelor.com/xml/ns/object-views http://axelor.com/xml/ns/object-views/object-views_5.2.xsd">
 
-
 	<!-- Nomenclature : * name : "interfaceName" + "fieldName" + ".select" -->
 	
 	<selection name="grade.1.up.to.10.select">
@@ -14,7 +13,6 @@
 		<option value="5">5</option>
 		<option value="6">6</option>
 		<option value="7">7</option>
-		<option value="8">8</option>
 		<option value="9">9</option>
 		<option value="10">10</option>
 	</selection>

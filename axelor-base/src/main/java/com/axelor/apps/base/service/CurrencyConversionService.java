@@ -127,6 +127,7 @@ public class CurrencyConversionService {
 
     LOG.trace("Currerncy conversion From: {} To: {}", new Object[] {currencyFrom, currencyTo});
     String wsUrl = appBaseService.getAppBase().getCurrencyWsURL();
+    System.err.println(wsUrl);
     if (wsUrl == null) {
       LOG.trace("Currency WS URL not configured");
       return rate;
@@ -160,6 +161,7 @@ public class CurrencyConversionService {
       request.setHeaders(headers);
       URL url =
           new URL(String.format(wsUrl, currencyFrom.getCode(), currencyTo.getCode(), date, date));
+      System.err.println(url);
       // URL url = new URL(String.format(wsUrl,currencyFrom.getCode()));
       LOG.trace("Currency conversion webservice URL: {}", new Object[] {url.toString()});
       request.setUrl(url);

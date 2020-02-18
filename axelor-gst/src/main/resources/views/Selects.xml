@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<object-views xmlns="http://axelor.com/xml/ns/object-views"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://axelor.com/xml/ns/object-views http://axelor.com/xml/ns/object-views/object-views_5.2.xsd">
+
+
+	<selection name="sequence.generic.code.select" id="gst.sequence.generic.code.select">
+		<option value="gstInvoice">Gst Invoice</option>
+	</selection>
+
+	<selection name="contact.type.select">
+		<option value="primary">primary</option>
+		<option value="secondary">secondary</option>
+		<option value="others">others</option>
+	</selection>
+
+	<selection name="address.type.select">
+		<option value="default">default</option>
+		<option value="invoice">invoice</option>
+		<option value="shipping">shipping</option>
+		<option value="other">other</option>
+	</selection>
+
+</object-views>

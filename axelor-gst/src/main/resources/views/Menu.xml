@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<object-views xmlns="http://axelor.com/xml/ns/object-views"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://axelor.com/xml/ns/object-views http://axelor.com/xml/ns/object-views/object-views_5.2.xsd">
+	
+	<menuitem title="State" name="menu-state-list" parent="admin-root-organisation-territory" action="gst.root.organisation.territory.state" />
+	
+	<action-view name="gst.root.organisation.territory.state"
+		title="State" model="com.axelor.apps.gst.db.State"  >
+		<view type="grid" name="state-grid"/>
+		<view type="form" name="state-form"/>
+	</action-view>
+	
+</object-views>
+

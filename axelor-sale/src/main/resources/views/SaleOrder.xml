@@ -46,7 +46,7 @@
 		<field name="saleOrderSeq" width="120"/>
 		<field name="company" form-view="company-form" grid-view="company-grid" if="__config__.app.getApp('base').getEnableMultiCompany()"/>
 		<field name="stockLocation" if="__config__.app.isApp('supplychain')"/>
-    <field name="tradingName" form-view="trading-name-form" grid-view="trading-name-grid" if="__config__.app.getApp('base').enableTradingNamesManagement"/>
+  	    <field name="tradingName" form-view="trading-name-form" grid-view="trading-name-grid" if="__config__.app.getApp('base').enableTradingNamesManagement"/>
 		<field name="clientPartner" form-view="partner-form" grid-view="partner-grid" />
 		<field name="externalReference" />
 		<field name="confirmationDateTime" />

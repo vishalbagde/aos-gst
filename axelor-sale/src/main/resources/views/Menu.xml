@@ -210,14 +210,14 @@
 		<view type="grid" name="tax-grid"/>
 		<view type="form" name="tax-form"/>
 	</action-view>
-
+	
 	<menuitem name="sale-conf-configurators" parent="sc-root-sale-conf" order="20"
 			  title="Configurators" if="__config__.app.getApp('sale').getEnableConfigurator()"/>
-
+	
 	<menuitem name="sale-conf-configurators-creator" parent="sale-conf-configurators"
 			  title="Configurator creators" action="sale.conf.configurator.creator"
 			  if="__config__.app.getApp('sale').getEnableConfigurator()"/>
-
+	
 	<action-view name="sale.conf.configurator.creator" title="Configurator creators"
 				 model="com.axelor.apps.sale.db.ConfiguratorCreator" >
 		<view type="grid" name="configurator-creator-grid" />
