@@ -141,6 +141,7 @@ public class InvoiceLineController {
     response.setValue("inTaxTotal", inTaxTotal);
     response.setValue("companyInTaxTotal", companyInTaxTotal);
     response.setValue("companyExTaxTotal", companyExTaxTotal);
+
   }
 
   public void getProductInformation(ActionRequest request, ActionResponse response)
