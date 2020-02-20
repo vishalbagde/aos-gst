@@ -5,55 +5,68 @@
 
 	<form name="invoice-line-form" id="gst-invoice-line-form" title="Invoice line"
 		model="com.axelor.apps.account.db.InvoiceLine" extension="true">
-		
-	
+
+		<extend target="//field[@name='partner']">
+			<attribute name="onSelect" value="action-invoice-method-set-partner-domain" />
+		</extend>
+
 		<extend target="//field[@name='price']">
+			<attribute name="onChange"
+				value="action-invoice-line-method-onchange-price,action-invoice-line-method-compute,action-invoice-line-method-compute-analytic-distribution,action-invoice-line-method-onchange-calculate-gst" />
 			<insert position="after">
-					<field name="gstRate" colSpan="3"/>
+				<field name="gstRate" colSpan="3"
+					onChange="action-invoice-line-method-onchange-calculate-gst" />
 			</insert>
 		</extend>
-		
-		
+
+		<extend target="//field[@name='discountAmount']">
+			<attribute name="onChange"
+				value="action-invoice-line-method-compute,action-invoice-line-method-compute-analytic-distribution,action-invoice-line-method-onchange-calculate-gst" />
+		</extend>
+
 		<extend target="//field[@name='companyInTaxTotal']">
 			<insert position="after">
-				<panel name="netGstTotalPanel" title="Gst Details" colSpan="12" itemSpan="4">
-					<field name="cgst"/>
-					<field name="sgst"/>	
-					<field name="igst"/>
+				<panel name="netGstTotalPanel" title="Gst Details" colSpan="12"
+					itemSpan="4">
+					<field name="cgst" />
+					<field name="sgst" />
+					<field name="igst" />
 				</panel>
 			</insert>
 		</extend>
 	</form>
-	
-	
-	<action-group name="action-group-account-invoice-line-product-onchange" id="action-group-gst-invoice-line-product-onchange">
-    	<action name="action-invoice-line-method-get-product-information"/>
-    	<action name="action-invoice-line-method-get-product-price" if="__config__.app.isApp('supplychain') &amp;&amp; (__config__.app.isApp('sale') &amp;&amp; __config__.app.getApp('sale').getProductPackMgt())"/>
-    	<action name="action-invoice-line-method-compute"/>
-    	<action name="action-invoice-line-method-get-and-compute-analytic-distribution"/>
-    	<action name="action-budget-validate-exceed-line-amount"/>
-    	<action name="action-invoice-line-attrs-compute-total-pack" if="(__config__.app.isApp('supplychain') &amp;&amp; __config__.app.getApp('sale').getProductPackMgt())"/>
-    	<action name="action-invoice-line-method-get-fixed-asset-category" if="__config__.app.isApp('account')"/>
-    	<action name="action-attrs-account-invoice-line-onnew-onload"/>
-    	
-    	<action name="action-invoice-line-method-onchange-calculate-gst"/>		
-    </action-group>
-    
-    
-    <action-group name="action-group-account-invoice-line-qty-onchange" id="action-group-gst-invoice-line-qty-onchange">
-		<action name="action-invoice-line-method-get-discount"/>
-		<action name="action-invoice-line-method-compute"/>
-		<action name="action-invoice-line-method-compute-analytic-distribution"/>
-		<action name="action-budget-validate-exceed-line-amount"/>
-		<action name="action-invoice-method-title-subline-update-qty" if="(__config__.app.isApp('supplychain') &amp;&amp; __config__.app.getApp('sale').getProductPackMgt())"/>
-		<action name="action-invoice-line-attrs-compute-total-pack" if="(__config__.app.isApp('supplychain') &amp;&amp; __config__.app.getApp('sale').getProductPackMgt())"/>
-		
-		<action name="action-invoice-line-method-onchange-calculate-gst"/>
+
+	<action-group name="action-group-account-invoice-line-product-onchange"
+		id="action-group-gst-invoice-line-product-onchange">
+		<action name="action-invoice-line-method-get-product-information" />
+		<action name="action-invoice-line-method-get-product-price"
+			if="__config__.app.isApp('supplychain') &amp;&amp; (__config__.app.isApp('sale') &amp;&amp; __config__.app.getApp('sale').getProductPackMgt())" />
+		<action name="action-invoice-line-method-compute" />
+		<action name="action-invoice-line-method-get-and-compute-analytic-distribution" />
+		<action name="action-budget-validate-exceed-line-amount" />
+		<action name="action-invoice-line-attrs-compute-total-pack"
+			if="(__config__.app.isApp('supplychain') &amp;&amp; __config__.app.getApp('sale').getProductPackMgt())" />
+		<action name="action-invoice-line-method-get-fixed-asset-category" if="__config__.app.isApp('account')" />
+		<action name="action-attrs-account-invoice-line-onnew-onload" />
+
+		<action name="action-invoice-line-method-onchange-calculate-gst" />
 	</action-group>
-    
-    
-	
+
+	<action-group name="action-group-account-invoice-line-qty-onchange"
+		id="action-group-gst-invoice-line-qty-onchange">
+		<action name="action-invoice-line-method-get-discount" />
+		<action name="action-invoice-line-method-compute" />
+		<action name="action-invoice-line-method-compute-analytic-distribution" />
+		<action name="action-budget-validate-exceed-line-amount" />
+		<action name="action-invoice-method-title-subline-update-qty"
+			if="(__config__.app.isApp('supplychain') &amp;&amp; __config__.app.getApp('sale').getProductPackMgt())" />
+		<action name="action-invoice-line-attrs-compute-total-pack"
+			if="(__config__.app.isApp('supplychain') &amp;&amp; __config__.app.getApp('sale').getProductPackMgt())" />
+
+		<action name="action-invoice-line-method-onchange-calculate-gst" />
+	</action-group>
+
 	<action-method name="action-invoice-line-method-onchange-calculate-gst">
-		<call class="com.axelor.apps.gst.web.GstInvoiceLineController" method="calculateGstInInvoiceLine"/>
+		<call class="com.axelor.apps.gst.web.GstInvoiceLineController" method="calculateGstInInvoiceLine" />
 	</action-method>
 </object-views>

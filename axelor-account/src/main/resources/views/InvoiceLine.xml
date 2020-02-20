@@ -281,7 +281,7 @@
 		<action name="action-invoice-line-attrs-hidden-menu-form"/>
 	</action-group>
 
-    <!--     ACTION RECORDS -->
+    <!--ACTION RECORDS-->
     
     <action-record name="action-invoice-line-record-new" model="com.axelor.apps.account.db.InvoiceLine">
     	<field name="qty" expr="eval: 1"/>

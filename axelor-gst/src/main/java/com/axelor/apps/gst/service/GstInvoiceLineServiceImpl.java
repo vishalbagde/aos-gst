@@ -17,62 +17,55 @@ import java.util.Map;
 
 public class GstInvoiceLineServiceImpl extends InvoiceLineProjectServiceImpl {
 
-  @Inject
-  public GstInvoiceLineServiceImpl(
-      CurrencyService currencyService,
-      PriceListService priceListService,
-      AppAccountService appAccountService,
-      AnalyticMoveLineService analyticMoveLineService,
-      AccountManagementAccountService accountManagementAccountService,
-      PurchaseProductService purchaseProductService) {
-    super(
-        currencyService,
-        priceListService,
-        appAccountService,
-        analyticMoveLineService,
-        accountManagementAccountService,
-        purchaseProductService);
-  }
+	@Inject
+	public GstInvoiceLineServiceImpl(CurrencyService currencyService, PriceListService priceListService,
+			AppAccountService appAccountService, AnalyticMoveLineService analyticMoveLineService,
+			AccountManagementAccountService accountManagementAccountService,
+			PurchaseProductService purchaseProductService) {
+		super(currencyService, priceListService, appAccountService, analyticMoveLineService,
+				accountManagementAccountService, purchaseProductService);
+	}
 
-  @Override
-  public Map<String, Object> fillProductInformation(Invoice invoice, InvoiceLine invoiceLine)
-      throws AxelorException {
-	  
-	 Map<String, Object> productInformation = super.fillProductInformation(invoice, invoiceLine);
-    
-    productInformation.put("gstRate", invoiceLine.getProduct().getGstRate());
-    invoiceLine.setGstRate(invoiceLine.getProduct().getGstRate());
-    
-    productInformation.put("taxLine", null);
-    return productInformation;
-  }
+	@Override
+	public Map<String, Object> fillProductInformation(Invoice invoice, InvoiceLine invoiceLine) throws AxelorException {
 
-  public InvoiceLine calculateGst(Invoice invoice, InvoiceLine invoiceLine) {
-    boolean isIgst = false;
-    if (invoice.getCompany().getAddress() != null || invoice.getAddress() != null) {
-      if (invoice.getCompany().getAddress().getState() == invoice.getAddress().getState())
-        isIgst = false;
-      else isIgst = true;
-    }
+		Map<String, Object> productInformation = super.fillProductInformation(invoice, invoiceLine);
 
-    if (invoiceLine.getExTaxTotal() != null || invoiceLine.getGstRate() != null) {
-      BigDecimal totalGst =
-          invoiceLine
-              .getExTaxTotal()
-              .multiply(invoiceLine.getGstRate())
-              .divide(BigDecimal.valueOf(100));
-      
-      System.err.println("In Tax "+invoiceLine.getExTaxTotal());
-      System.err.println(totalGst);
-      
-      if (isIgst) {
-        invoiceLine.setIgst(totalGst);
-      } else {
-        invoiceLine.setCgst(totalGst.divide(BigDecimal.valueOf(2)));
-        invoiceLine.setSgst(totalGst.divide(BigDecimal.valueOf(2)));
-      }
-    }
+		productInformation.put("gstRate", invoiceLine.getProduct().getGstRate());
+		invoiceLine.setGstRate(invoiceLine.getProduct().getGstRate());
 
-    return invoiceLine;
-  }
+		productInformation.put("taxLine", null);
+		return productInformation;
+	}
+
+	public InvoiceLine calculateGst(Invoice invoice, InvoiceLine invoiceLine) {
+		boolean isIgst = false;
+
+		if (invoice.getCompany().getAddress() != null || invoice.getAddress() != null) {
+			if (invoice.getCompany().getAddress().getState() == invoice.getAddress().getState())
+				isIgst = false;
+			else
+				isIgst = true;
+		}
+
+		invoiceLine.setIgst(BigDecimal.ZERO);
+		invoiceLine.setSgst(BigDecimal.ZERO);
+		invoiceLine.setCgst(BigDecimal.ZERO);
+
+		if (invoiceLine.getExTaxTotal() != null || invoiceLine.getGstRate() != null) {
+			BigDecimal totalGst = invoiceLine.getExTaxTotal().multiply(invoiceLine.getGstRate())
+					.divide(BigDecimal.valueOf(100));
+
+			System.err.println("In Tax " + invoiceLine.getExTaxTotal());
+			System.err.println(totalGst);
+
+			if (isIgst) {
+				invoiceLine.setIgst(totalGst);
+			} else {
+				invoiceLine.setCgst(totalGst.divide(BigDecimal.valueOf(2)));
+				invoiceLine.setSgst(totalGst.divide(BigDecimal.valueOf(2)));
+			}
+		}
+		return invoiceLine;
+	}
 }
