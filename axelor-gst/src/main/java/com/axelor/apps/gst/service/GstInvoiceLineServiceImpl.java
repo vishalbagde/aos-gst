@@ -41,29 +41,29 @@ public class GstInvoiceLineServiceImpl extends InvoiceLineProjectServiceImpl {
 	public InvoiceLine calculateGst(Invoice invoice, InvoiceLine invoiceLine) {
 		boolean isIgst = false;
 
-		if (invoice.getCompany().getAddress() != null || invoice.getAddress() != null) {
-			if (invoice.getCompany().getAddress().getState() == invoice.getAddress().getState())
-				isIgst = false;
-			else
-				isIgst = true;
-		}
-
 		invoiceLine.setIgst(BigDecimal.ZERO);
 		invoiceLine.setSgst(BigDecimal.ZERO);
 		invoiceLine.setCgst(BigDecimal.ZERO);
 
-		if (invoiceLine.getExTaxTotal() != null || invoiceLine.getGstRate() != null) {
-			BigDecimal totalGst = invoiceLine.getExTaxTotal().multiply(invoiceLine.getGstRate())
-					.divide(BigDecimal.valueOf(100));
+		if (invoice.getCompany().getAddress() != null && invoice.getAddress() != null) {
+			if (invoice.getCompany().getAddress().getState() == invoice.getAddress().getState())
+				isIgst = false;
+			else
+				isIgst = true;
 
-			System.err.println("In Tax " + invoiceLine.getExTaxTotal());
-			System.err.println(totalGst);
+			if (invoiceLine.getExTaxTotal() != null || invoiceLine.getGstRate() != null) {
+				BigDecimal totalGst = invoiceLine.getExTaxTotal().multiply(invoiceLine.getGstRate())
+						.divide(BigDecimal.valueOf(100));
 
-			if (isIgst) {
-				invoiceLine.setIgst(totalGst);
-			} else {
-				invoiceLine.setCgst(totalGst.divide(BigDecimal.valueOf(2)));
-				invoiceLine.setSgst(totalGst.divide(BigDecimal.valueOf(2)));
+				System.err.println("In Tax " + invoiceLine.getExTaxTotal());
+				System.err.println(totalGst);
+
+				if (isIgst) {
+					invoiceLine.setIgst(totalGst);
+				} else {
+					invoiceLine.setCgst(totalGst.divide(BigDecimal.valueOf(2)));
+					invoiceLine.setSgst(totalGst.divide(BigDecimal.valueOf(2)));
+				}
 			}
 		}
 		return invoiceLine;

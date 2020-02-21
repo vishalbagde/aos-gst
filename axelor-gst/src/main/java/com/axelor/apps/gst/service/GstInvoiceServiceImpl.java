@@ -72,22 +72,21 @@ public class GstInvoiceServiceImpl extends InvoiceServiceProjectImpl {
 
 		List<InvoiceLine> invoiceLineList = invoice.getInvoiceLineList();
 
-		/*
-		 * for(InvoiceLine invoiceLine:invoiceLineList) { invoiceLine =
-		 * gstInvoiceLineService.calculateGst(invoice, invoiceLine); }
-		 */
 		if (invoiceLineList != null) {
 
-			for (int i = 0; i < invoiceLineList.size(); i++) {
-				invoiceLineList.set(i, gstInvoiceLineService.calculateGst(invoice, invoiceLineList.get(i)));
+			for (InvoiceLine invoiceLine : invoiceLineList) {
+				invoiceLine = gstInvoiceLineService.calculateGst(invoice, invoiceLine);
 			}
-			
+
+			/*
+			 * for (int i = 0; i < invoiceLineList.size(); i++) { invoiceLineList.set(i,
+			 * gstInvoiceLineService.calculateGst(invoice, invoiceLineList.get(i))); }
+			 */
 			invoice.setInvoiceLineList(invoiceLineList);
 			invoice = this.compute(invoice);
 		}
 
 		return invoice;
-
 	}
 
 }
