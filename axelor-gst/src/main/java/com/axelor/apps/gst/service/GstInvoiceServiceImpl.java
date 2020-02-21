@@ -38,49 +38,56 @@ public class GstInvoiceServiceImpl extends InvoiceServiceProjectImpl {
 		invoice = super.compute(invoice);
 		List<InvoiceLine> invoiceLineList = invoice.getInvoiceLineList();
 
-		invoice.setNetIgst(BigDecimal.ZERO);
-		invoice.setNetCgst(BigDecimal.ZERO);
-		invoice.setNetSgst(BigDecimal.ZERO);
+		if (invoiceLineList != null) {
 
-		BigDecimal gst = BigDecimal.ZERO;
+			invoice.setNetIgst(BigDecimal.ZERO);
+			invoice.setNetCgst(BigDecimal.ZERO);
+			invoice.setNetSgst(BigDecimal.ZERO);
 
-		for (InvoiceLine invoiceLine : invoiceLineList) {
-			invoice.setNetIgst(invoice.getNetIgst().add(invoiceLine.getIgst()));
-			invoice.setNetCgst(invoice.getNetCgst().add(invoiceLine.getCgst()));
-			invoice.setNetSgst(invoice.getNetSgst().add(invoiceLine.getSgst()));
+			BigDecimal gst = BigDecimal.ZERO;
+
+			for (InvoiceLine invoiceLine : invoiceLineList) {
+				invoice.setNetIgst(invoice.getNetIgst().add(invoiceLine.getIgst()));
+				invoice.setNetCgst(invoice.getNetCgst().add(invoiceLine.getCgst()));
+				invoice.setNetSgst(invoice.getNetSgst().add(invoiceLine.getSgst()));
+			}
+
+			if (invoice.getCompany().getAddress().getState() == invoice.getAddress().getState()) {
+				gst = invoice.getNetCgst().add(invoice.getNetSgst());
+			} else {
+				gst = invoice.getNetIgst();
+			}
+
+			invoice.setTaxTotal(gst.setScale(2, BigDecimal.ROUND_HALF_UP));
+			invoice.setInTaxTotal(invoice.getCompanyInTaxTotal().add(gst).setScale(2, BigDecimal.ROUND_HALF_UP));
+
+			invoice.setAmountRemaining(invoice.getInTaxTotal());
 		}
-
-		if (invoice.getCompany().getAddress().getState() == invoice.getAddress().getState()) {
-			gst = invoice.getNetCgst().add(invoice.getNetSgst());
-		} else {
-			gst = invoice.getNetIgst();
-		}
-
-		invoice.setTaxTotal(gst.setScale(2, BigDecimal.ROUND_HALF_UP));
-		invoice.setInTaxTotal(invoice.getCompanyInTaxTotal().add(gst).setScale(2, BigDecimal.ROUND_HALF_UP));
-
-		invoice.setAmountRemaining(invoice.getInTaxTotal());
 
 		return invoice;
 	}
-	
-	/*
-	 work in progress in this method
-	public Invoice gstCalculateInInvoice(Invoice invoice)
-	{
+
+	public Invoice gstCalculateInInvoice(Invoice invoice) throws AxelorException {
 		GstInvoiceLineServiceImpl gstInvoiceLineService = Beans.get(GstInvoiceLineServiceImpl.class);
-		
-		 List<InvoiceLine> invoiceLineList = invoice.getInvoiceLineList();
-		 
-		 invoiceLineList.stream().forEach(gstInvoice);
-		 
-		 for(InvoiceLine invoiceLine:invoiceLineList)
-		 {
-			 invoiceLine = gstInvoiceLineService.calculateGst(invoice, invoiceLine);
-		 }
-		
-		
-		
+
+		List<InvoiceLine> invoiceLineList = invoice.getInvoiceLineList();
+
+		/*
+		 * for(InvoiceLine invoiceLine:invoiceLineList) { invoiceLine =
+		 * gstInvoiceLineService.calculateGst(invoice, invoiceLine); }
+		 */
+		if (invoiceLineList != null) {
+
+			for (int i = 0; i < invoiceLineList.size(); i++) {
+				invoiceLineList.set(i, gstInvoiceLineService.calculateGst(invoice, invoiceLineList.get(i)));
+			}
+			
+			invoice.setInvoiceLineList(invoiceLineList);
+			invoice = this.compute(invoice);
+		}
+
+		return invoice;
+
 	}
-	*/
+
 }

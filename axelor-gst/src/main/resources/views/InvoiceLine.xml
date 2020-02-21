@@ -6,9 +6,6 @@
 	<form name="invoice-line-form" id="gst-invoice-line-form" title="Invoice line"
 		model="com.axelor.apps.account.db.InvoiceLine" extension="true">
 
-		<extend target="//field[@name='partner']">
-			<attribute name="onSelect" value="action-invoice-method-set-partner-domain" />
-		</extend>
 
 		<extend target="//field[@name='price']">
 			<attribute name="onChange"

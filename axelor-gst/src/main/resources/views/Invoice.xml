@@ -6,15 +6,23 @@
 	<form name="invoice-form" id="gst-invoice-form" title="Invoice"
 		model="com.axelor.apps.account.db.Invoice" extension="true">
 
+		<extend target="//field[@name='partner']">
+			<attribute name="onChange" value="action-group-account-invoice-partner-onchange,action-method-invoice-address-str,action-invoice-method-onchange-verify-calculate-gst" />
+		</extend>
+
 		<extend target="//panel-tabs[@name='mainPanelTab']">
 			<insert position="after">
 				<panel name="netGstTotalPanel" title="Gst Details" itemSpan="4">
-					<field name="netCgst" title="CGST" readonly="true"/>
-					<field name="netSgst" title="SGST" readonly="true"/>
-					<field name="netIgst" title="IGST" readonly="true"/>
+					<field name="netCgst" title="CGST" readonly="true" />
+					<field name="netSgst" title="SGST" readonly="true" />
+					<field name="netIgst" title="IGST" readonly="true" />
 				</panel>
 			</insert>
 		</extend>
 	</form>
 
+	<action-method name="action-invoice-method-onchange-verify-calculate-gst">
+		<call class="com.axelor.apps.gst.web.GstInvoiceController" method="verifyGstCalculateInInvoice" />
+	</action-method>
+	
 </object-views>
