@@ -1,7 +1,11 @@
 package com.axelor.apps.gst.service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 import com.axelor.apps.account.db.Invoice;
 import com.axelor.apps.account.db.InvoiceLine;
@@ -13,7 +17,10 @@ import com.axelor.apps.account.service.invoice.factory.CancelFactory;
 import com.axelor.apps.account.service.invoice.factory.ValidateFactory;
 import com.axelor.apps.account.service.invoice.factory.VentilateFactory;
 import com.axelor.apps.account.service.payment.invoice.payment.InvoicePaymentToolService;
+import com.axelor.apps.base.db.Product;
+import com.axelor.apps.base.db.repo.ProductRepository;
 import com.axelor.apps.base.service.PartnerService;
+import com.axelor.apps.base.service.ProductService;
 import com.axelor.apps.base.service.alarm.AlarmEngineService;
 import com.axelor.apps.businessproject.service.InvoiceServiceProjectImpl;
 import com.axelor.exception.AxelorException;
@@ -23,13 +30,19 @@ import com.google.inject.Inject;
 public class GstInvoiceServiceImpl extends InvoiceServiceProjectImpl {
 
 	@Inject
+	GstInvoiceLineServiceImpl gstInvoiceLineService;
+	
+
+	@Inject
 	public GstInvoiceServiceImpl(ValidateFactory validateFactory, VentilateFactory ventilateFactory,
 			CancelFactory cancelFactory, AlarmEngineService<Invoice> alarmEngineService, InvoiceRepository invoiceRepo,
 			AppAccountService appAccountService, PartnerService partnerService, InvoiceLineService invoiceLineService,
-			AccountConfigService accountConfigService) {
+			AccountConfigService accountConfigService, GstInvoiceLineServiceImpl gstInvoiceLineService) {
 
 		super(validateFactory, ventilateFactory, cancelFactory, alarmEngineService, invoiceRepo, appAccountService,
 				partnerService, invoiceLineService, accountConfigService);
+
+		this.gstInvoiceLineService = gstInvoiceLineService;
 	}
 
 	@Override
@@ -45,48 +58,52 @@ public class GstInvoiceServiceImpl extends InvoiceServiceProjectImpl {
 			invoice.setNetSgst(BigDecimal.ZERO);
 
 			BigDecimal gst = BigDecimal.ZERO;
+			BigDecimal igst = BigDecimal.ZERO;
+			BigDecimal cgst = BigDecimal.ZERO;
+			BigDecimal sgst = BigDecimal.ZERO;
 
 			for (InvoiceLine invoiceLine : invoiceLineList) {
-				invoice.setNetIgst(invoice.getNetIgst().add(invoiceLine.getIgst()));
-				invoice.setNetCgst(invoice.getNetCgst().add(invoiceLine.getCgst()));
-				invoice.setNetSgst(invoice.getNetSgst().add(invoiceLine.getSgst()));
+				igst = igst.add(invoiceLine.getIgst());
+				cgst = cgst.add(invoiceLine.getCgst());
+				sgst = sgst.add(invoiceLine.getSgst());
 			}
 
-			if (invoice.getCompany().getAddress().getState() == invoice.getAddress().getState()) {
-				gst = invoice.getNetCgst().add(invoice.getNetSgst());
-			} else {
-				gst = invoice.getNetIgst();
-			}
+			invoice.setNetIgst(igst);
+			invoice.setNetCgst(cgst);
+			invoice.setNetSgst(sgst);
 
+			gst = igst.add(cgst).add(sgst);
 			invoice.setTaxTotal(gst.setScale(2, BigDecimal.ROUND_HALF_UP));
-			invoice.setInTaxTotal(invoice.getCompanyInTaxTotal().add(gst).setScale(2, BigDecimal.ROUND_HALF_UP));
-
-			invoice.setAmountRemaining(invoice.getInTaxTotal());
+			invoice.setInTaxTotal(invoice.getExTaxTotal().add(gst).setScale(2, BigDecimal.ROUND_HALF_UP));
 		}
-
 		return invoice;
 	}
 
 	public Invoice gstCalculateInInvoice(Invoice invoice) throws AxelorException {
-		GstInvoiceLineServiceImpl gstInvoiceLineService = Beans.get(GstInvoiceLineServiceImpl.class);
-
+		
 		List<InvoiceLine> invoiceLineList = invoice.getInvoiceLineList();
+		List<InvoiceLine> updatedInvoiceLineList = new ArrayList<>();
+		
+		boolean isIgst=gstInvoiceLineService.checkIsIgst(invoice);
 
-		if (invoiceLineList != null) {
+		if (invoiceLineList != null && !invoiceLineList.isEmpty()) {
 
 			for (InvoiceLine invoiceLine : invoiceLineList) {
-				invoiceLine = gstInvoiceLineService.calculateGst(invoice, invoiceLine);
+				
+				invoiceLine = gstInvoiceLineService.calculateGst(invoiceLine,isIgst);
+				
+				updatedInvoiceLineList.add(invoiceLine);
 			}
-
 			/*
 			 * for (int i = 0; i < invoiceLineList.size(); i++) { invoiceLineList.set(i,
 			 * gstInvoiceLineService.calculateGst(invoice, invoiceLineList.get(i))); }
 			 */
-			invoice.setInvoiceLineList(invoiceLineList);
+			invoice.setInvoiceLineList(updatedInvoiceLineList);
 			invoice = this.compute(invoice);
 		}
-
 		return invoice;
 	}
-
+	
+	
+	
 }

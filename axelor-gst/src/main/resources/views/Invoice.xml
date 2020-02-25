@@ -6,13 +6,22 @@
 	<form name="invoice-form" id="gst-invoice-form" title="Invoice"
 		model="com.axelor.apps.account.db.Invoice" extension="true">
 
-		<extend target="//field[@name='partner']">
-			<attribute name="onChange" value="action-group-account-invoice-partner-onchange,action-method-invoice-address-str,action-invoice-method-onchange-verify-calculate-gst" />
+		<extend target="//button[@name='reportsBtn']">
+			<insert position="after">
+				<button name="printGstInvoiceBtn" title="Print" icon="fa-print"
+					onClick="action-invoice-gst-method-print-gst-invoice" />
+			</insert>
 		</extend>
 
-		<extend target="//panel-tabs[@name='mainPanelTab']">
-			<insert position="after">
-				<panel name="netGstTotalPanel" title="Gst Details" itemSpan="4">
+		<extend target="//field[@name='partner']">
+			<attribute name="onChange"
+				value="action-group-account-invoice-partner-onchange,action-method-invoice-address-str,action-invoice-method-onchange-verify-calculate-gst" />
+		</extend>
+
+		<extend target="//panel[@name='totalsPanel']">
+			<insert position="before">
+				<panel name="netGstTotalPanel" title="Gst Details" itemSpan="4"
+					sidebar="true">
 					<field name="netCgst" title="CGST" readonly="true" />
 					<field name="netSgst" title="SGST" readonly="true" />
 					<field name="netIgst" title="IGST" readonly="true" />
@@ -23,6 +32,35 @@
 
 	<action-method name="action-invoice-method-onchange-verify-calculate-gst">
 		<call class="com.axelor.apps.gst.web.GstInvoiceController" method="verifyGstCalculateInInvoice" />
+	</action-method>
+
+
+	<action-group name="action-account-invoice-onnew-group" id="action-account-gst-onnew-group">
+		<action name="action-invoice-record-default" />
+		<action name="action-invoice-method-payment-mode-condition" if="company != null" />
+		<action name="action-invoice-method-fill-company-bank-details" />
+		<action name="action-invoice-attrs-collapse-irrecoverable-group" />
+		<action name="action-invoice-record-in-ati" />
+		<action name="action-invoice-attrs-in-ati" />
+		<action name="action-invoice-attrs-hidden-bank-details" />
+		<action name="action-invoice-method-fill-advance-payment-set" />
+		<action name="action-invoice-attrs-show-validate-button" />
+		<action name="action-invoice-attrs-interco-supplychain" />
+		<action name="action-invoice-record-interco-supplychain" />
+		<action name="action-invoice-attrs-change-create-refund-title" />
+		<action name="action-invoice-record-printing-fields" if="__config__.app.isApp('business-project')" />
+		<action name="action-invoice-record-load-dummy-field-payment-voucher-on-invoice" />
+		<action name="action-invoice-record-set-dummy-field-language" />
+
+		<action name="action-method-gst-on-new-invoice-set-default-value-in-invoice" />
+	</action-group>
+
+	<action-method name="action-method-gst-on-new-invoice-set-default-value-in-invoice">
+		<call class="com.axelor.apps.gst.web.GstInvoiceController" method="setOrderLineFromProduct" />
+	</action-method>
+	
+	<action-method name="action-invoice-gst-method-print-gst-invoice">
+		<call class="com.axelor.apps.gst.web.GstInvoiceController" method="printGstInvoice" />
 	</action-method>
 	
 </object-views>

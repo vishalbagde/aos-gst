@@ -7,13 +7,17 @@
 		model="com.axelor.apps.account.db.InvoiceLine" extension="true">
 
 
+		<extend target="//field[@name='taxLine']">
+			<attribute name="readonly" value="true" />
+			<replace>
+				<field name="gstRate" colSpan="3"
+					onChange="action-invoice-line-method-onchange-calculate-gst" />
+			</replace>
+		</extend>
+
 		<extend target="//field[@name='price']">
 			<attribute name="onChange"
 				value="action-invoice-line-method-onchange-price,action-invoice-line-method-compute,action-invoice-line-method-compute-analytic-distribution,action-invoice-line-method-onchange-calculate-gst" />
-			<insert position="after">
-				<field name="gstRate" colSpan="3"
-					onChange="action-invoice-line-method-onchange-calculate-gst" />
-			</insert>
 		</extend>
 
 		<extend target="//field[@name='discountAmount']">

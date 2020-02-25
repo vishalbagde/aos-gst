@@ -18,12 +18,28 @@
 					<field name="hsbn"/>
 					<field name="gstRate"/>					
 				</panel>
-			</insert>
+			</insert>	
 		</extend>
 	</form>
 	
+	<grid name="product-grid" model="com.axelor.apps.base.db.Product" title="Products"  id="gst-product-grid" extension="true">
+		<extend target="//button[@name='checkDuplicateBtn']">
+				<insert position="after">
+						<button name="generateInvoice" title="Generate Invoice" onClick="action-method-gst-on-click-set-product-id,action-method-gst-set-product-invoice-line"/>
+				</insert>		
+		</extend>
+	</grid>
+		
 	<action-attrs name="action-product-attrs-gst-change-category-set-gst-rate">
-	<attribute name="value" for="gstRate" expr="eval:productCategory.gstRate"/>
+		<attribute name="value" for="gstRate" expr="eval:productCategory.gstRate"/>
 	</action-attrs>
-
+	
+	<action-method name="action-method-gst-on-click-set-product-id">
+	<call class="com.axelor.apps.gst.web.GstProductController" method="setProductIds"/>
+	</action-method>
+	
+	<action-method name="action-method-gst-set-product-invoice-line">
+		<call class="com.axelor.apps.gst.web.GstProductController" method="createInvoiceFromGrid"/>
+	</action-method>
+	
 </object-views>

@@ -5,17 +5,26 @@ import com.axelor.apps.account.db.InvoiceLine;
 import com.axelor.apps.account.service.AccountManagementAccountService;
 import com.axelor.apps.account.service.AnalyticMoveLineService;
 import com.axelor.apps.account.service.app.AppAccountService;
+import com.axelor.apps.base.db.Product;
+import com.axelor.apps.base.db.repo.ProductRepository;
 import com.axelor.apps.base.service.CurrencyService;
 import com.axelor.apps.base.service.PriceListService;
 import com.axelor.apps.businessproject.service.InvoiceLineProjectServiceImpl;
+import com.axelor.apps.gst.db.State;
 import com.axelor.apps.purchase.service.PurchaseProductService;
 import com.axelor.exception.AxelorException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class GstInvoiceLineServiceImpl extends InvoiceLineProjectServiceImpl {
+
+	@Inject
+	ProductRepository productRepo;
 
 	@Inject
 	public GstInvoiceLineServiceImpl(CurrencyService currencyService, PriceListService priceListService,
@@ -32,40 +41,70 @@ public class GstInvoiceLineServiceImpl extends InvoiceLineProjectServiceImpl {
 		Map<String, Object> productInformation = super.fillProductInformation(invoice, invoiceLine);
 
 		productInformation.put("gstRate", invoiceLine.getProduct().getGstRate());
-		invoiceLine.setGstRate(invoiceLine.getProduct().getGstRate());
-
 		productInformation.put("taxLine", null);
 		return productInformation;
 	}
 
-	public InvoiceLine calculateGst(Invoice invoice, InvoiceLine invoiceLine) {
-		boolean isIgst = false;
+	public InvoiceLine calculateGst(InvoiceLine invoiceLine, Boolean isIgst) {
 
 		invoiceLine.setIgst(BigDecimal.ZERO);
 		invoiceLine.setSgst(BigDecimal.ZERO);
 		invoiceLine.setCgst(BigDecimal.ZERO);
 
-		if (invoice.getCompany().getAddress() != null && invoice.getAddress() != null) {
-			if (invoice.getCompany().getAddress().getState() == invoice.getAddress().getState())
-				isIgst = false;
-			else
-				isIgst = true;
+		BigDecimal totalGst = invoiceLine.getExTaxTotal().multiply(invoiceLine.getGstRate())
+				.divide(new BigDecimal(100));
 
-			if (invoiceLine.getExTaxTotal() != null || invoiceLine.getGstRate() != null) {
-				BigDecimal totalGst = invoiceLine.getExTaxTotal().multiply(invoiceLine.getGstRate())
-						.divide(BigDecimal.valueOf(100));
-
-				System.err.println("In Tax " + invoiceLine.getExTaxTotal());
-				System.err.println(totalGst);
-
-				if (isIgst) {
-					invoiceLine.setIgst(totalGst);
-				} else {
-					invoiceLine.setCgst(totalGst.divide(BigDecimal.valueOf(2)));
-					invoiceLine.setSgst(totalGst.divide(BigDecimal.valueOf(2)));
-				}
-			}
+		if (isIgst) {
+			invoiceLine.setIgst(totalGst);
+		} else {
+			BigDecimal gst = totalGst.divide(BigDecimal.valueOf(2));
+			invoiceLine.setCgst(gst);
+			invoiceLine.setSgst(gst);
 		}
 		return invoiceLine;
+	}
+
+	public boolean checkIsIgst(Invoice invoice) {
+		boolean isIgst = false;
+		State cstate = null;
+		State pstate = null;
+
+		if (invoice.getCompany().getAddress() != null && invoice.getAddress() != null
+				&& invoice.getCompany().getAddress().getState() != null && invoice.getAddress().getState() != null) {
+			cstate = invoice.getCompany().getAddress().getState();
+			pstate = invoice.getAddress().getState();
+
+			if (cstate.equals(pstate)) {
+				isIgst = false;
+			} else {
+				isIgst = true;
+			}
+		}
+		return isIgst;
+	}
+
+	public List<InvoiceLine> setProductInInvoiceLineFromProduct(String[] productIdsList)
+			throws IllegalArgumentException, AxelorException {
+
+		List<InvoiceLine> invoiceLineList = new ArrayList<InvoiceLine>();
+
+		for (String productIdStr : productIdsList) {
+			InvoiceLine invoiceLine = new InvoiceLine();
+			Product product = productRepo.find(Long.parseLong(productIdStr));
+
+			if (product != null) {
+				invoiceLine.setProduct(product);
+				invoiceLine.setQty(new BigDecimal(1));
+				invoiceLine.setGstRate(product.getGstRate());
+				invoiceLine.setPrice(product.getSalePrice());
+				invoiceLine.setExTaxTotal(product.getSalePrice());
+				invoiceLine.setPriceDiscounted(product.getSalePrice());
+				invoiceLine.setProductName("[" + product.getCode() + "] " + product.getName());
+				invoiceLine.setUnit(product.getUnit());
+
+				invoiceLineList.add(invoiceLine);
+			}
+		}
+		return invoiceLineList;
 	}
 }
