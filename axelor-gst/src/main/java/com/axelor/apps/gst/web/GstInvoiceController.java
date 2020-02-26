@@ -46,20 +46,20 @@ public class GstInvoiceController {
 
 	public void printGstInvoice(ActionRequest request,ActionResponse response) throws AxelorException
 	{
-			Invoice invoice = request.getContext().asType(Invoice.class);
-			
-		    Context context = request.getContext();
-			
+			Invoice invoice = request.getContext().asType(Invoice.class);						
 							 
 		    //String name = I18n.get("Product Catalog");
 		    String name = "gstinvoice";
 
 		    String fileLink =
-		        ReportFactory.createReport(IReport.GST_INVOICE, name)
+		        ReportFactory.createReport(IReport.GST_INVOICE, name +"-${date}")
 		            .addParam("InvoiceId", invoice.getId())
+		            .addParam("HeaderHeight","1")
+		            .addParam("FooterHeight","1")
+		            .addParam("Locale", "fr")
 		            .generate()
 		            .getFileLink();
-
+		    
 		    response.setView(ActionView.define(name).add("html", fileLink).map());
 	}
 }

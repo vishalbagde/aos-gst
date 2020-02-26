@@ -523,8 +523,8 @@ reportContext.getDesignHandle().findMasterPage("Simple MasterPage").setProperty(
                     <text-property name="displayName">amount_remaining</text-property>
                     <text-property name="heading">amount_remaining</text-property>
                 </structure>
-                 <structure>
-		    <property name="columnName">invoice_comments</property>
+                <structure>
+                    <property name="columnName">invoice_comments</property>
                     <property name="analysis">dimension</property>
                     <text-property name="displayName">invoice_comments</text-property>
                     <text-property name="heading">invoice_comments</text-property>
@@ -809,11 +809,11 @@ reportContext.getDesignHandle().findMasterPage("Simple MasterPage").setProperty(
                         <property name="name">displayHeadOfficeAddress</property>
                         <property name="dataType">integer</property>
                     </structure>
-		    <structure>
-			<property name="position">50</property>
+                    <structure>
+                        <property name="position">50</property>
                         <property name="name">invoice_comments</property>
-			<property name="dataType">string</property>
-		    </structure>
+                        <property name="dataType">string</property>
+                    </structure>
                 </list-property>
             </structure>
             <property name="dataSource">Data Source</property>
@@ -1161,13 +1161,13 @@ reportContext.getDesignHandle().findMasterPage("Simple MasterPage").setProperty(
                     <property name="dataType">integer</property>
                     <property name="nativeDataType">-7</property>
                 </structure>
-		<structure>
-		    <property name="position">50</property>
+                <structure>
+                    <property name="position">50</property>
                     <property name="name">invoice_comments</property>
                     <property name="nativeName">invoice_comments</property>
                     <property name="dataType">string</property>
                     <property name="nativeDataType">12</property>
-		</structure>
+                </structure>
             </list-property>
             <xml-property name="queryText"><![CDATA[select Invoice.id as inv_id, 
 	coalesce(MetaFileTN.file_path, MetaFile.file_path) as logo_path, 
@@ -5796,8 +5796,8 @@ if(row["is_pack_line"] &amp;&amp; row["translation"] != null)
                     <expression name="expression" type="javascript">dataSetRow["proforma_comments"]</expression>
                     <property name="dataType">string</property>
                 </structure>
-		<structure>
-		   <property name="name">invoice_comments</property>
+                <structure>
+                    <property name="name">invoice_comments</property>
                     <text-property name="displayName">invoice_comments</text-property>
                     <expression name="expression" type="javascript">dataSetRow["invoice_comments"]</expression>
                     <property name="dataType">string</property>
@@ -7973,7 +7973,7 @@ else
                     <expression name="expression" type="javascript">dataSetRow["proforma_comments"]</expression>
                     <property name="dataType">string</property>
                 </structure>
-		<structure>
+                <structure>
                     <property name="name">invoice_comments</property>
                     <text-property name="displayName">invoice_comments</text-property>
                     <expression name="expression" type="javascript">dataSetRow["invoice_comments"]</expression>
