@@ -8,7 +8,7 @@
 		<option value="gstInvoice">Gst Invoice</option>
 	</selection>
 
-	<selection name="contact.type.select">
+	<selection name="contact.type.select" >
 		<option value="primary">primary</option>
 		<option value="secondary">secondary</option>
 		<option value="others">others</option>

@@ -7,8 +7,8 @@
 		model="com.axelor.apps.base.db.ProductCategory" extension="true">
 
 		<extend target="//field[@name='parentProductCategory']">
-			<insert position="after">
-				<field name="gstRate" />
+			<insert position="after" >
+				<field name="gstRate" if="__config__.app.isApp('gst')" />
 			</insert>
 		</extend>
 	</form>

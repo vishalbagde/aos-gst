@@ -9,15 +9,15 @@ import com.axelor.apps.base.db.Product;
 import com.axelor.apps.base.db.repo.ProductRepository;
 import com.axelor.apps.base.service.CurrencyService;
 import com.axelor.apps.base.service.PriceListService;
+import com.axelor.apps.base.service.app.AppService;
 import com.axelor.apps.businessproject.service.InvoiceLineProjectServiceImpl;
 import com.axelor.apps.gst.db.State;
 import com.axelor.apps.purchase.service.PurchaseProductService;
 import com.axelor.exception.AxelorException;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.axelor.inject.Beans;
 import com.google.inject.Inject;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,6 +39,10 @@ public class GstInvoiceLineServiceImpl extends InvoiceLineProjectServiceImpl {
 	public Map<String, Object> fillProductInformation(Invoice invoice, InvoiceLine invoiceLine) throws AxelorException {
 
 		Map<String, Object> productInformation = super.fillProductInformation(invoice, invoiceLine);
+		if (!Beans.get(AppService.class).isApp("gst")) {
+
+			return productInformation;
+		}
 
 		productInformation.put("gstRate", invoiceLine.getProduct().getGstRate());
 		productInformation.put("taxLine", null);
@@ -64,17 +68,26 @@ public class GstInvoiceLineServiceImpl extends InvoiceLineProjectServiceImpl {
 		return invoiceLine;
 	}
 
+	public boolean checkStateIsNotNull(Invoice invoice) {
+
+		if (invoice.getCompany().getAddress() != null && invoice.getAddress() != null
+				&& invoice.getCompany().getAddress().getState() != null && invoice.getAddress().getState() != null) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
 	public boolean checkIsIgst(Invoice invoice) {
 		boolean isIgst = false;
 		State cstate = null;
 		State pstate = null;
 
-		if (invoice.getCompany().getAddress() != null && invoice.getAddress() != null
-				&& invoice.getCompany().getAddress().getState() != null && invoice.getAddress().getState() != null) {
+		if (checkStateIsNotNull(invoice)) {
 			cstate = invoice.getCompany().getAddress().getState();
 			pstate = invoice.getAddress().getState();
 
-			if (cstate.equals(pstate)) {
+			if (cstate.getName().equals(pstate.getName())) {
 				isIgst = false;
 			} else {
 				isIgst = true;

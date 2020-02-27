@@ -8,7 +8,7 @@
 
 		<extend target="//panel[@name='mainPanel']">
 			<insert position="after">
-				<panel name="gstinPanel" title="GSTIN">
+				<panel name="gstinPanel" title="GSTIN" if="__config__.app.isApp('gst')">
 					<field name="gstin" />
 				</panel>
 			</insert>
@@ -19,9 +19,9 @@
 		model="com.axelor.apps.base.db.Partner" extension="true">
 
 		<extend target="//panel[@name='companyPanel']">
-			<insert position="after">
-				<panel name="contactTypePanel">
-					<field name="contactTypeSelect"></field>
+			<insert position="after" >
+				<panel name="contactTypePanel"  if="__config__.app.isApp('gst')">
+					<field name="contactTypeSelect" if="__config__.app.isApp('gst')"/>
 				</panel>
 			</insert>
 		</extend>
