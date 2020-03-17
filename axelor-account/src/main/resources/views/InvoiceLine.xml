@@ -379,7 +379,7 @@
 
 		<!-- Hide ATI OR depending on pack configuration -->
 		<attribute name="hidden" for="exTaxTotal,price" expr="eval: __parent__.inAti || typeSelect == 2 &amp;&amp; packPriceSelect == 1 || isSubLine &amp;&amp; parentLine?.packPriceSelect == 0" if="__parent__?._model == 'com.axelor.apps.account.db.Invoice'"/>
-		<attribute name="hidden" for="subLineList.exTaxTotal,subLineList.price" expr="eval: __parent__.inAti || typeSelect == 2 &amp;&amp; packPriceSelect == 0" if="__parent__?._model == 'com.axelor.apps.account.db.Invoice'"/>
+		<attribute name="hidden" for="subLi	neList.exTaxTotal,subLineList.price" expr="eval: __parent__.inAti || typeSelect == 2 &amp;&amp; packPriceSelect == 0" if="__parent__?._model == 'com.axelor.apps.account.db.Invoice'"/>
 		<attribute name="hidden" for="inTaxTotal,inTaxPrice" expr="eval: !__parent__.inAti || typeSelect == 2 &amp;&amp; packPriceSelect == 1 || isSubLine &amp;&amp; parentLine?.packPriceSelect == 0" if="__parent__?._model == 'com.axelor.apps.account.db.Invoice'"/>
 		<attribute name="hidden" for="subLineList.inTaxTotal,subLineList.inTaxPrice" expr="eval: !__parent__.inAti || typeSelect == 2 &amp;&amp; packPriceSelect == 0" if="__parent__?._model == 'com.axelor.apps.account.db.Invoice'"/>
 		

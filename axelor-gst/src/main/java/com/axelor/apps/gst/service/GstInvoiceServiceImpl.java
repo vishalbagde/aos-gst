@@ -79,6 +79,7 @@ public class GstInvoiceServiceImpl extends InvoiceServiceProjectImpl {
       gst = igst.add(cgst).add(sgst);
       invoice.setTaxTotal(gst.setScale(2, BigDecimal.ROUND_HALF_UP));
       invoice.setInTaxTotal(invoice.getExTaxTotal().add(gst).setScale(2, BigDecimal.ROUND_HALF_UP));
+      invoice.setAmountRemaining(invoice.getInTaxTotal());
     }
     return invoice;
   }
@@ -95,7 +96,6 @@ public class GstInvoiceServiceImpl extends InvoiceServiceProjectImpl {
       for (InvoiceLine invoiceLine : invoiceLineList) {
 
         invoiceLine = gstInvoiceLineService.calculateGst(invoiceLine, isIgst);
-
         updatedInvoiceLineList.add(invoiceLine);
       }
       /*

@@ -25,5 +25,30 @@
 			<move position="before" source="//button-group[@name='map1BtnGroup']" />
 		</extend>
 	</form>
+	
+	<form name="address-partner-address-form" id="gst-partner-address-form" title="Address"
+		model="com.axelor.apps.base.db.Address" extension="true">
+
+		<extend target="//field[@name='addressL7Country']">
+			<attribute name="colSpan" value="6" />
+			<insert position="before">
+				<field name="typeSelect" if="__config__.app.isApp('gst')"/>
+			</insert>
+			<insert position="after">
+				<field name="state" if="__config__.app.isApp('gst')"/>
+			</insert>
+		</extend>
+
+		<extend target="//field[@name='addressL6']" >
+			<attribute name="colSpan" value="6" />
+		</extend>
+
+		<extend target="//static[@name='addressL6Text']">
+			<attribute name="colSpan" value="6" />
+			<move position="before" source="//button-group[@name='map1BtnGroup']" />
+		</extend>
+	</form>
+	
+
 
 </object-views>	
